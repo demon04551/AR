@@ -2,11 +2,12 @@ using UnityEngine;
 using Vuforia;
 
 public class MVuforiaButton : MonoBehaviour , IVirtualButtonEventHandler {
-	public Color[] m_color;
-	public Material m_material;
+	public Color[] m_color;//改变后的颜色
+	public Material m_currentMaterial;//当前的材质
+	public GameObject[] target;//用于替换的模型
 
-	public GameObject[] target;
-	private GameObject currentDisplayBuilding;
+	private GameObject currentDisplayBuilding;//当前在target上面的模型
+	private BuildingType m_buildingData;
 
 	int colorNum = 0, createObjNum = 0;
 
@@ -19,20 +20,22 @@ public class MVuforiaButton : MonoBehaviour , IVirtualButtonEventHandler {
 		currentDisplayBuilding.transform.parent = this.transform;
 		currentDisplayBuilding.transform.localScale = Vector3.one;
 		currentDisplayBuilding.transform.localPosition = Vector3.zero;
+
 	}
 
 	public void OnButtonPressed(VirtualButtonAbstractBehaviour vb)
 	{
+		//改变颜色
 		if (vb.name == "changeColorButton") {
 			if (m_color.Length != 0) {
-				m_material.color = m_color[colorNum];	
+				m_currentMaterial.color = m_color[colorNum];	
 				colorNum ++;
 				if (colorNum >= m_color.Length) {
 					colorNum = 0;
 				}
 			}
 		}
-
+		//改变模型样式
 		if (vb.name == "changeModelButton") {
 			if(target.Length != 0){
 				createObjNum ++;
@@ -43,6 +46,14 @@ public class MVuforiaButton : MonoBehaviour , IVirtualButtonEventHandler {
 				currentDisplayBuilding.transform.parent = this.transform;
 				currentDisplayBuilding.transform.localScale = Vector3.one;
 				currentDisplayBuilding.transform.localPosition = Vector3.zero;
+			}
+		}
+		//脱卡
+		if (vb.name == "MoveOutButton") {
+			if (currentDisplayBuilding != null) {
+				currentDisplayBuilding.transform.parent = null;
+				currentDisplayBuilding.transform.localPosition = this.transform.localPosition;
+				currentDisplayBuilding.transform.localRotation = this.transform.localRotation;
 			}
 		}
 	}
